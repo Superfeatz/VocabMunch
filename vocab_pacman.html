@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>VocabMunch – Belajar Kosakata Bahasa Inggris</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header>
+  <div class="logo">Vocab<span>Munch</span></div>
+  <div style="font-size:10px;color:var(--dim);">Game Edukasi Kosakata Bahasa Inggris</div>
+</header>
+
+<!-- START SCREEN -->
+<div id="start-screen" class="screen active">
+  <div>
+    <div class="title-main">VOCAB MUNCH</div>
+    <div class="title-sub">Makan huruf, kuasai kosakata!</div>
+  </div>
+
+  <div class="pac-demo">
+    <div class="pac-anim"></div>
+    <div class="pac-letters">
+      <div class="pac-ltr">H</div><div class="pac-ltr">E</div>
+      <div class="pac-ltr">L</div><div class="pac-ltr">L</div><div class="pac-ltr">O</div>
+    </div>
+  </div>
+
+  <p class="desc-text">Gerakkan Pac-Man untuk memakan huruf-huruf yang membentuk jawaban yang benar — <strong style="color:var(--yellow)">tidak harus berurutan!</strong> Hindari ghost dan huruf palsu.</p>
+
+  <div class="section-label">PILIH KATEGORI</div>
+  <div class="cat-grid">
+    <button class="cat-btn all" data-cat="random"><span class="cat-icon">🎲</span>Random</button>
+    <button class="cat-btn" data-cat="1"><span class="cat-icon">🏠</span>Rumah</button>
+    <button class="cat-btn" data-cat="2"><span class="cat-icon">🍽️</span>Makanan</button>
+    <button class="cat-btn" data-cat="3"><span class="cat-icon">🏫</span>Sekolah</button>
+    <button class="cat-btn" data-cat="4"><span class="cat-icon">💼</span>Kantor</button>
+    <button class="cat-btn" data-cat="5"><span class="cat-icon">🚗</span>Jalan</button>
+  </div>
+
+  <div class="section-label">TINGKATAN</div>
+  <div class="levels-grid">
+    <div class="lv-card lv1"><h3>⭐ LV1 – TEBAK KATA</h3><p>Arti Indonesia diberikan. Cari & makan kata Inggrisnya.</p></div>
+    <div class="lv-card lv2"><h3>⭐⭐ LV2 – ARTI KATA</h3><p>Kata Inggris diberikan. Cari & makan artinya dalam Indonesia.</p></div>
+    <div class="lv-card lv3"><h3>⭐⭐⭐ LV3 – KALIMAT</h3><p>Lengkapi kalimat yang ada kata yang hilang.</p></div>
+    <div class="lv-card lv4"><h3>⭐⭐⭐⭐ LV4 – CAMPURAN</h3><p>Semua tipe + huruf jebakan lebih banyak, ghost lebih cepat!</p></div>
+  </div>
+
+  <button class="start-btn" id="startBtn" disabled>▶ MULAI MAIN</button>
+  <div class="leaderboard" style="margin-top:20px;width:100%;max-width:400px;">
+    <div class="section-label">🏆 TOP 10 LEADERBOARD</div>
+    <div id="lbList" class="lb-list" style="background:var(--panel);border:2px solid var(--border);border-radius:10px;padding:10px;font-family:var(--ufont);font-size:13px;color:var(--white);text-align:left;display:flex;flex-direction:column;gap:5px;">Belum ada skor.</div>
+  </div>
+  <button class="start-btn" onclick="showScreen('credit-screen')" style="background:#222; margin-top:10px; font-size:12px; padding:10px; width:100%; max-width:400px; color:#aaa; border-color:#444;">👤 TENTANG PEMBUAT GAME</button>
+</div>
+
+<!-- GAME SCREEN -->
+<div id="game-screen" class="screen">
+  <div class="hud">
+    <div class="hud-item"><div class="hud-lbl">SKOR</div><div class="hud-val" id="hSkor">0</div></div>
+    <div class="hud-item"><div class="hud-lbl">LEVEL</div><div class="hud-val blue" id="hLv">1</div></div>
+    <div class="hud-item"><div class="hud-lbl">SOAL</div><div class="hud-val green" id="hProg">1/10</div></div>
+    <div class="hud-item"><div class="hud-lbl">NYAWA</div><div class="lives-row" id="hLives"><div class="life on"></div><div class="life on"></div><div class="life on"></div></div></div>
+    <div class="hud-item"><div class="hud-lbl">WAKTU</div><div class="hud-val" id="hTimer" style="color:var(--orange)">30</div></div>
+    <div class="hud-item"><div class="hud-lbl">STREAK</div><div class="hud-val" id="hStreak" style="color:var(--purple)">0🔥</div></div>
+  </div>
+
+  <div class="timer-bar-wrap"><div class="timer-bar" id="timerBar"></div></div>
+
+  <div class="q-box" id="qBox">
+    <span class="q-badge lv1" id="qBadge">LV1</span>
+    <div class="q-text" id="qText">Memuat...</div>
+    <div class="q-hint" id="qHint"></div>
+    <div class="q-word-prog" id="qWordProg"></div>
+  </div>
+
+  <div class="canvas-wrap">
+    <canvas id="gc" width="800" height="440"></canvas>
+    <div class="countdown-ov hide" id="cdOv"><div class="countdown-num" id="cdNum">3</div></div>
+    <div class="ov hide" id="ov">
+      <h2 id="ovTitle"></h2>
+      <div class="ov-word" id="ovWord"></div>
+      <p id="ovDesc"></p>
+      <div class="ov-btns">
+        <button class="ov-btn pri" id="ovNext">LANJUT ▶</button>
+        <button class="ov-btn sec" id="ovQuit">Keluar</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="dpad" id="dpad">
+    <div></div><button class="dp-btn" id="dUp">▲</button><div></div>
+    <button class="dp-btn" id="dLeft">◀</button>
+    <div class="dp-btn dp-center">●</div>
+    <button class="dp-btn" id="dRight">▶</button>
+    <div></div><button class="dp-btn" id="dDown">▼</button><div></div>
+  </div>
+
+  <div class="ctrl-row">
+    <span><span class="key">←↑↓→</span> atau <span class="key">WASD</span> untuk bergerak</span>
+    <span>Makan huruf berurutan!</span>
+  </div>
+</div>
+
+<!-- RESULT SCREEN -->
+<div id="result-screen" class="screen">
+  <div class="res-title" id="resTitle">Permainan Selesai!</div>
+  <div class="res-stars" id="resStars">⭐⭐⭐</div>
+  <div class="res-stats">
+    <div class="stat-card"><div class="num" id="rSkor">0</div><div class="lbl">Total Skor</div></div>
+    <div class="stat-card"><div class="num" id="rBenar">0</div><div class="lbl">Benar</div></div>
+    <div class="stat-card"><div class="num" id="rSalah">0</div><div class="lbl">Salah</div></div>
+    <div class="stat-card"><div class="num" id="rLv">1</div><div class="lbl">Level Dicapai</div></div>
+    <div class="stat-card"><div class="num" id="rStreak">0</div><div class="lbl">Streak Maks</div></div>
+  </div>
+  <div id="lbInputArea" style="display:none;background:var(--panel);border:2px solid var(--yellow);border-radius:10px;padding:15px;margin-top:10px;">
+    <div style="font-family:var(--gfont);font-size:10px;color:var(--yellow);margin-bottom:10px;">🎉 MASUK TOP 10! 🎉</div>
+    <input type="text" id="lbName" placeholder="Nama Anda" maxlength="12" style="padding:8px;border-radius:5px;border:none;margin-right:5px;font-family:var(--ufont);outline:none;">
+    <button id="lbSaveBtn" class="start-btn" style="padding:8px 15px;font-size:10px;">SIMPAN</button>
+  </div>
+  <div class="section-label" style="margin-top:20px;">KOSAKATA DIMAINKAN</div>
+  <div class="vocab-list" id="vocabList"></div>
+  <div style="display:flex;gap:14px;flex-wrap:wrap;justify-content:center;">
+    <button class="start-btn" onclick="location.reload()">↩ MAIN LAGI</button>
+  </div>
+</div>
+
+<!-- CREDIT SCREEN -->
+<div id="credit-screen" class="screen">
+  <div class="res-title" style="margin-bottom:10px;">Tentang Pembuat Game</div>
+  <div style="background:var(--panel); border:2px solid var(--border); border-radius:15px; padding:25px; max-width:500px; width:90%; margin:0 auto 25px; text-align:center; box-shadow:0 8px 30px rgba(0,0,0,0.5);">
+    <div style="width:120px; height:120px; border-radius:50%; background:#2a2a2a; margin:0 auto 15px; border:4px solid var(--yellow); overflow:hidden; display:flex; align-items:center; justify-content:center;">
+      <span style="font-size:60px;">🧑‍💻</span>
+      <!-- Ganti span di atas dengan <img src="foto-anda.jpg" width="100%" height="100%" style="object-fit:cover;"> jika ada foto -->
+    </div>
+    <h2 style="font-family:var(--gfont); color:var(--yellow); font-size:24px; margin-bottom:5px;">Nama Lengkap Anda</h2>
+    <h3 style="font-family:var(--ufont); color:var(--blue); font-size:14px; margin-bottom:15px; font-weight:normal;">NIM / Instansi Anda</h3>
+    <p style="font-family:var(--ufont); color:#ddd; font-size:14px; line-height:1.6; text-align:justify; margin:0;">
+      Halo! Saya adalah kreator di balik game VocabMunch Pac-Man. Game ini dikembangkan sebagai bentuk inovasi pembelajaran interaktif, menggabungkan mekanik klasik arcade dengan tantangan asah kosakata. Melalui game ini, pemain diharapkan dapat meningkatkan penguasaan bahasa Inggris dengan cara yang lebih seru, dinamis, dan menyenangkan!
+    </p>
+    <div style="display:flex; justify-content:center; gap:10px; margin-top:20px; flex-wrap:wrap;">
+      <span style="background:#111; padding:5px 12px; border-radius:15px; font-size:12px; font-family:var(--ufont); color:var(--green); border:1px solid #333;">Game Design</span>
+      <span style="background:#111; padding:5px 12px; border-radius:15px; font-size:12px; font-family:var(--ufont); color:var(--red); border:1px solid #333;">Logic</span>
+      <span style="background:#111; padding:5px 12px; border-radius:15px; font-size:12px; font-family:var(--ufont); color:var(--blue); border:1px solid #333;">Web Tech</span>
+    </div>
+  </div>
+  <button class="start-btn" onclick="showScreen('start-screen')" style="max-width:200px;">↩ KEMBALI</button>
+</div>
+
+<script src="data.js"></script>
+<script src="game.js"></script>
+</body>
+</html>
